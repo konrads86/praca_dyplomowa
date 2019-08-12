@@ -16,7 +16,6 @@
 #include<LiquidCrystal.h>
 #include "HX711.h"
 
-bool start = false;
 int counter = 0;
 int feedValue =0;
 
@@ -37,7 +36,7 @@ bool ifButtonPressed(int n) {
     if (digitalRead(n) == true)
     {
       return true;
-    };
+    }
   }
   return false;
 }
@@ -62,35 +61,22 @@ void setup()
 
 void loop()
 {
+
 while(ifButtonPressed(button3)==HIGH)
 {
-myPrint(0,0,"Ilosc Miarek: ",0);
-myPrint(0,1,"  -     +     OK",0);
-myPrint(14, 0, String(counter),0);
-  if (ifButtonPressed(button1)) 
-    {
-    counter=counter+1;
-    }
-  if (ifButtonPressed(button2)) 
-    {
-    counter=counter-1;
-    }
-  if (ifButtonPressed(button3)) 
-    {
-    start= true;
-    }
+  myPrint(0,0,"Ilosc Miarek: ",0);
+  myPrint(0,1,"  -     +     OK",0);
+  myPrint(14, 0, String(counter),0);
+  if (ifButtonPressed(button1)) { counter=counter+1;}
+  if (ifButtonPressed(button2)) {counter=counter-1;}
 }
 feedValue=counter*OneDoseWeight;
- 
-   Lcd.clear();
-   myPrint(2,0,"Waga=0   g",0);
-   if (start)
-    {
-    Scale.tare(); 
-    while ((int(Scale.get_units(qty)) < feedValue))
+Lcd.clear();
+myPrint(2,0,"Waga=0   g",0);
+Scale.tare(); 
+while ((int(Scale.get_units(qty)) < feedValue))
     {
     digitalWrite(VibMotor, LOW);
-    start = false;
     for (int h=0; h<steps;h++)
         {
         digitalWrite(STEP, 1);
@@ -99,12 +85,11 @@ feedValue=counter*OneDoseWeight;
         delay(mDelay);
         }
     myPrint(7,0,String(int(Scale.get_units(qty))),0);   
-    }   
-    digitalWrite(VibMotor, HIGH);
-    myPrint(0,1,"     GOTOWE   OK",0);
-    while(ifButtonPressed(button3)==HIGH)
-    {
     }
-  }
 
+digitalWrite(VibMotor, HIGH);
+while(ifButtonPressed(button3)==HIGH)
+    {  myPrint(0,1,"     GOTOWE   OK",0);
+    }
+delay(200);
 }
